@@ -7,8 +7,10 @@ Reference copies of the code you build in **Solana Playground** (and later in lo
 | Module folder | Exercise | What it covers |
 |---------------|----------|----------------|
 | [`01-introduction/hello_solana/`](01-introduction/hello_solana/) | **hello_solana** | Minimal Anchor program: `hello` instruction, `client.ts` flow, basic test — matches Part 01 Playground slides. |
-
-*More rows will be added as new modules ship (e.g. Part 02, accounts, `init` / `space`, etc.).*
+| `02-anchor-core/*` | **(Part 02 exercises)** | `#[program]`, handlers, `Context<T>`, `#[derive(Accounts)]`, System Program, `init` / `space`, minimal client + test pattern. |
+| `03-accounts-state/*` | **(Part 03)** | Accounts as state, lifecycle (initialize/read/update), mutation with `mut`, logs (`msg!`), and common mistakes (`mut` / `space`). |
+| `04-pdas-project-prep/*` | **(Part 04)** | PDA fundamentals (deterministic addresses, seeds, program-owned state) and bridge to NFT / auction project patterns. |
+| `05-final-projects/*` | **(Part 05)** | Final projects: NFT mint flow and auction dApp flow, including account/state design and instruction mapping. |
 
 ## How to use
 
