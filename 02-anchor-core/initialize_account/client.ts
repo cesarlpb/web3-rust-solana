@@ -5,18 +5,26 @@
   - Gets the transaction details.
   - Logs the transaction logs (includes "data = 42").
 */
+const newAccount = web3.Keypair.generate();
+const newAccountPubkey = newAccount.publicKey;
+console.log("new account pubkey:", newAccountPubkey.toBase58());
+
 const tx = await pg.program.methods
   .initialize(new BN(42))
   .accounts({
     signer: pg.wallet.publicKey,
     newAccount: newAccountPubkey,
-    systemProgram: SystemProgram.programId,
+    systemProgram: web3.SystemProgram.programId,
   })
+  .signers([newAccount])
   .rpc();
 
 // similar to the previous client.ts file, we confirm the transaction and
 // get the transaction details to log the transaction logs:
 await pg.connection.confirmTransaction(tx, "confirmed");
+
+const stored = await pg.program.account.newAccount.fetch(newAccountPubkey);
+console.log("stored data:", stored.data.toString());
 
 const details = await pg.connection.getTransaction(tx, {
   commitment: "confirmed",
