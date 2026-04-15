@@ -15,7 +15,7 @@ declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFLSn");
 
 #[program]
 pub mod example {
-    use super::*;
+    use crate::*;
 
     // `initialize` instruction that initializes the new account with the given data
     pub fn initialize(ctx: Context<Initialize>, data: u64) -> Result<()> {
