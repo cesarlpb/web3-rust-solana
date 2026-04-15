@@ -8,7 +8,7 @@ describe("initialize", () => {
   it("sets data", async () => {
     // generate a new keypair for the new account (PDA-less account)
     // we are not using PDAs in this example, so we are generating a new keypair:
-    const kp = Keypair.generate();
+    const kp = web3.Keypair.generate();
     // send the `initialize` instruction with the signer and new account
     // we need to pass the signer and new account to the instruction, and the 
     // system program is required for the instruction to be executed (CPI flow):
