@@ -5,9 +5,15 @@
   - Gets the transaction details.
   - Logs the transaction logs (includes "data = 42").
 */
+
+// generate a new keypair for the new account (PDA-less account)
 const newAccount = web3.Keypair.generate();
 const newAccountPubkey = newAccount.publicKey;
+// log the new account pubkey
 console.log("new account pubkey:", newAccountPubkey.toBase58());
+// send the `initialize` instruction with the signer and new account
+// we need to pass the signer and new account to the instruction, and the 
+// system program is required for the instruction to be executed (CPI flow):
 
 const tx = await pg.program.methods
   .initialize(new BN(42))
