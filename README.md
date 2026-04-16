@@ -2,18 +2,22 @@
 
 Reference copies of the code you build in **Solana Playground** (and later in local Anchor). Paths here are **flat** for easy diffing with slides; in a real Anchor project, `lib.rs` lives under `programs/<name>/src/`, and client/tests follow the template layout.
 
+**Slides (Reveal.js):** live under [`../course/`](../course/) — open `slides.html` in each part folder in the browser (parts 01–05).
+
 ## Index
 
-| Module folder | Exercise | What it covers |
-|---------------|----------|----------------|
-| [`01-introduction/hello_solana/`](01-introduction/hello_solana/) | **hello_solana** | Minimal Anchor program: `hello` instruction, `client.ts` flow, basic test — matches Part 01 Playground slides. |
-| `02-anchor-core/*` | **(Part 02 exercises)** | `#[program]`, handlers, `Context<T>`, `#[derive(Accounts)]`, System Program, `init` / `space`, minimal client + test pattern. |
-| `03-accounts-state/*` | **(Part 03)** | Accounts as state, lifecycle (initialize/read/update), mutation with `mut`, logs (`msg!`), and common mistakes (`mut` / `space`). |
-| `04-pdas-project-prep/*` | **(Part 04)** | PDA fundamentals (deterministic addresses, seeds, program-owned state) and bridge to NFT / auction project patterns. |
-| `05-final-projects/*` | **(Part 05)** | Final projects: NFT mint flow and auction dApp flow, including account/state design and instruction mapping. |
+| Part | Code folder | Exercise / notes | Slides |
+|------|-------------|------------------|--------|
+| **01** | [`01-introduction/hello_solana/`](01-introduction/hello_solana/) | [`exercise.md`](01-introduction/hello_solana/exercise.md) — minimal `hello`, `client.ts`, test | [`../course/01-introduction/slides.html`](../course/01-introduction/slides.html) |
+| **02** | [`02-anchor-core/`](02-anchor-core/) | [`exercise.md`](02-anchor-core/exercise.md) — `#[program]`, `Context`, `#[derive(Accounts)]`, `init` / `space`; labs: [`initialize_account/`](02-anchor-core/initialize_account/), [`update_account/`](02-anchor-core/update_account/), [`update_account_with_getter/`](02-anchor-core/update_account_with_getter/), [`template_exercise_solution/`](02-anchor-core/template_exercise_solution/) | [`../course/02-introduccion-rust-web3-anchor/slides.html`](../course/02-introduccion-rust-web3-anchor/slides.html) |
+| **03** | [`03-accounts-state/`](03-accounts-state/) | [`exercise.md`](03-accounts-state/exercise.md); bases: [`exercise_solution_base/`](03-accounts-state/exercise_solution_base/), full: [`exercise_solution_final/`](03-accounts-state/exercise_solution_final/) | [`../course/03-accounts-state/slides.html`](../course/03-accounts-state/slides.html) |
+| **04** | [`04-pdas-project-prep/`](04-pdas-project-prep/) | [`exercise.md`](04-pdas-project-prep/exercise.md) — PDAs, seeds, project prep | [`../course/04-pdas-project-prep/slides.html`](../course/04-pdas-project-prep/slides.html) |
+| **05** | [`05-final-projects/`](05-final-projects/) | [`projects.md`](05-final-projects/projects.md); skeletons: [`nft-flow/`](05-final-projects/nft-flow/), [`auction-dapp/`](05-final-projects/auction-dapp/) | [`../course/05-final-projects/slides.html`](../course/05-final-projects/slides.html) |
+
+Root-level [`lib.rs`](lib.rs), [`client.ts`](client.ts), [`anchor.test.ts`](anchor.test.ts) are a generic Playground-style template (not tied to one part).
 
 ## How to use
 
 1. Open **[Solana Playground](https://playground.solana.com)** → **New project** → **Anchor**.
-2. Paste or compare with the files in the matching **`hello_solana`** (or future) folder.
+2. Paste or compare with the files in the matching module folder (e.g. **`01-introduction/hello_solana/`** for Part 01, **`04-pdas-project-prep/`** for Part 04).
 3. **Program ID:** the `declare_id!` in `lib.rs` must match the ID shown after **Deploy** in Playground (replace if your template differs).
