@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bonus research — Auction + NFT</title>
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --surface: #1a2332;
+      --text: #e6edf3;
+      --muted: #8b949e;
+      --accent: #58a6ff;
+      --border: #30363d;
+      --code-bg: #161b22;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      font-size: 16px;
+    }
+    main {
+      max-width: 52rem;
+      margin: 0 auto;
+      padding: 2rem 1.5rem 4rem;
+    }
+    h1 {
+      font-size: 1.75rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+    h2 {
+      font-size: 1.35rem;
+      margin-top: 2.5rem;
+      padding-bottom: 0.35rem;
+      border-bottom: 1px solid var(--border);
+    }
+    h3 {
+      font-size: 1.1rem;
+      margin-top: 1.75rem;
+      color: var(--accent);
+    }
+    p, li { color: var(--text); }
+    .lead { color: var(--muted); font-size: 1.05rem; }
+    .badge {
+      display: inline-block;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.2rem 0.6rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 1.5rem;
+    }
+    a { color: var(--accent); }
+    hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 2rem 0;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1rem 0;
+      font-size: 0.95rem;
+    }
+    th, td {
+      border: 1px solid var(--border);
+      padding: 0.6rem 0.75rem;
+      text-align: left;
+    }
+    th { background: var(--surface); }
+    pre {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem 1.1rem;
+      overflow-x: auto;
+      font-size: 0.88rem;
+      line-height: 1.5;
+    }
+    code {
+      font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+      font-size: 0.9em;
+    }
+    p code, li code {
+      background: var(--code-bg);
+      padding: 0.15rem 0.35rem;
+      border-radius: 4px;
+    }
+    ul { padding-left: 1.25rem; }
+    li { margin: 0.35rem 0; }
+    .mermaid {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 1rem;
+      margin: 1rem 0;
+      overflow-x: auto;
+    }
+    .refs a { word-break: break-all; }
+    .scope strong { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Bonus research — Auction + NFT</h1>
+    <p class="lead">
+      The Track A lab uses <strong>one SPL mint</strong> to teach CPI and PDA signing.
+      Economically, the winner should receive the <strong>auctioned item</strong> (e.g. an NFT),
+      not their own bid back. This document is <strong>optional homework</strong>:
+      investigate how to merge the auction vault with the NFT flow from Part 05.
+    </p>
+    <p class="badge">Not required for Part 06 · No solution in this repo</p>
+
+    <hr />
+
+    <h2>What the lab does vs what a real auction does</h2>
+    <table>
+      <thead>
+        <tr><th></th><th>Track A lab (today)</th><th>Realistic auction</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Bidders pay</td><td>SPL tokens → vault</td><td>Payment token (USDC, etc.) → vault</td></tr>
+        <tr><td>Winner receives</td><td>Same tokens from vault</td><td><strong>NFT</strong> (or other item) from escrow</td></tr>
+        <tr><td>Seller receives</td><td><em>(not modeled)</em></td><td>Payment from vault</td></tr>
+        <tr><td>Outbid bidders</td><td><em>(not modeled)</em></td><td>Refund of previous bid</td></tr>
+      </tbody>
+    </table>
+    <p><strong>Reference code:</strong></p>
+    <ul>
+      <li>Auction + vault: <code>final_solution/</code></li>
+      <li>NFT flow (Part 05): <code>05-final-projects-solutions/nft-flow/</code></li>
+      <li>NFT + fee CPI (Part 06 B): <code>nft-fee-close/final_solution/</code></li>
+    </ul>
+
+    <hr />
+
+    <h2>Target architecture (investigate)</h2>
+    <pre><code>create_auction
+  creator signs → deposit NFT (supply 1) into item_vault_ata
+                  owner = auction vault PDA
+
+place_bid
+  bidder signs → payment token::transfer → payment_vault_ata
+
+settle_auction
+  vault PDA signs → payment_vault_ata → creator_ata     (seller paid)
+  vault PDA signs → item_vault_ata    → winner_nft_ata  (winner gets NFT)</code></pre>
+    <p>You will need <strong>two mints</strong>:</p>
+    <ul>
+      <li><code>payment_mint</code> — fungible (bids)</li>
+      <li><code>item_mint</code> — NFT (<code>decimals = 0</code>, <code>supply = 1</code>)</li>
+    </ul>
+
+    <hr />
+
+    <h2>Reference diagrams</h2>
+
+    <h3>Actors and vaults (target design)</h3>
+    <div class="mermaid">
+flowchart TB
+  subgraph actors["Wallets"]
+    C[Creator / seller]
+    B1[Bidder A]
+    B2[Bidder B — winner]
+  end
+  subgraph program["Auction program"]
+  PDA["Vault PDA\nseeds: vault + auction"]
+  end
+  subgraph escrow["Escrow ATAs — owner = Vault PDA"]
+    PAY_VAULT["payment_vault_ata\nmint = payment_mint"]
+    ITEM_VAULT["item_vault_ata\nmint = item_mint\namount = 1 NFT"]
+  end
+  C -->|"create_auction"| ITEM_VAULT
+  B1 -->|"place_bid: 50"| PAY_VAULT
+  B2 -->|"place_bid: 100"| PAY_VAULT
+  PAY_VAULT -->|"settle PDA CPI"| C
+  ITEM_VAULT -->|"settle PDA CPI"| B2
+    </div>
+
+    <h3>Instruction lifecycle</h3>
+    <div class="mermaid">
+sequenceDiagram
+  participant C as Creator
+  participant P as Auction program
+  participant V as Vault PDA
+  participant Bid as Bidder
+  participant W as Winner
+  C->>P: create_auction(item_mint, payment_mint)
+  P->>V: init vault PDA
+  C->>P: token::transfer NFT x1
+  Note over P,V: item_vault_ata from creator_ata
+  Bid->>P: place_bid(amount)
+  Bid->>P: token::transfer payment
+  Note over P,V: payment_vault_ata += amount
+  C->>P: settle_auction(winner)
+  P->>C: token::transfer payment PDA signs
+  P->>W: token::transfer NFT x1 PDA signs
+  Note over P: is_settled = true
+    </div>
+
+    <h3>CPI signers by instruction</h3>
+    <div class="mermaid">
+flowchart LR
+  subgraph create["create_auction"]
+    direction TB
+    C1[Creator wallet] -->|signs| CPI1["token::transfer NFT to item_vault_ata"]
+  end
+  subgraph bid["place_bid"]
+    direction TB
+    B1[Bidder wallet] -->|signs| CPI2["token::transfer payment to payment_vault_ata"]
+  end
+  subgraph settle["settle_auction"]
+    direction TB
+    CR[Creator wallet] -->|signs tx only| H[handler]
+    PDA[Vault PDA] -->|invoke_signed| CPI3["payment to creator_ata"]
+    PDA -->|invoke_signed| CPI4["NFT to winner_ata"]
+    H --> CPI3
+    H --> CPI4
+  end
+    </div>
+
+    <h3>PDA and account map</h3>
+    <pre><code>Auction PDA          ["auction", creator, auction_id]
+Vault PDA            ["vault", auction_pubkey]          ← signs both settle CPIs
+
+payment_vault_ata    owner = Vault PDA, mint = payment_mint
+item_vault_ata       owner = Vault PDA, mint = item_mint  (holds 1 NFT)
+bidder_payment_ata   owner = bidder,      mint = payment_mint
+creator_payment_ata  owner = creator,     mint = payment_mint
+winner_item_ata      owner = winner,      mint = item_mint</code></pre>
+
+    <h3>Lab today vs target</h3>
+    <div class="mermaid">
+flowchart TB
+  subgraph lab["Track A lab today"]
+    direction LR
+    L1[Bidder] -->|same mint| LV[Vault]
+    LV -->|same mint| L1
+  end
+  subgraph target["Bonus target"]
+    direction TB
+    T_C[Creator] -->|NFT| TV_ITEM[Item vault]
+    T_B[Bidder] -->|USDC| TV_PAY[Payment vault]
+    TV_PAY -->|settle| T_C
+    TV_ITEM -->|settle| T_W[Winner]
+  end
+    </div>
+
+    <hr />
+
+    <h2>Research questions</h2>
+    <p>Work through these in order. Write short notes or a diagram for each.</p>
+
+    <h3>1. State model</h3>
+    <ul>
+      <li>What new fields does <code>Auction</code> need? (<code>payment_mint</code>, <code>item_mint</code>, <code>item_vault_ata</code>?)</li>
+      <li>Do you need one vault PDA or two (payment vs item)?</li>
+      <li>How do you prove the NFT in escrow matches <code>auction.item_mint</code>?</li>
+    </ul>
+
+    <h3>2. Escrow the NFT at creation</h3>
+    <ul>
+      <li>How does the <strong>creator</strong> transfer the NFT into a vault ATA on <code>create_auction</code>?</li>
+      <li>Which account is the <strong>authority</strong> of <code>item_vault_ata</code>? (Hint: <strong>PDA owner</strong>.)</li>
+      <li>What <code>#[account(...)]</code> constraints validate <code>decimals == 0</code> and <code>amount == 1</code>?</li>
+    </ul>
+
+    <h3>3. CPI to assign NFT to the winner</h3>
+    <ul>
+      <li>On <code>settle_auction</code>, which instruction moves the NFT? (<code>token::transfer</code> with <code>amount = 1</code>.)</li>
+      <li>Write the <strong>signer seeds</strong> for the vault PDA.</li>
+      <li>What accounts must be passed to the CPI?</li>
+      <li>Why must <code>winner</code> match <code>auction.highest_bidder</code> before the NFT CPI?</li>
+    </ul>
+
+    <h3>4. Pay the seller</h3>
+    <ul>
+      <li>Should payment go to <code>auction.creator</code> on settle?</li>
+      <li>Can one <code>settle_auction</code> perform <strong>two CPIs</strong>? What if the second fails?</li>
+    </ul>
+
+    <h3>5. Part 05 NFT flow vs on-chain NFT</h3>
+    <p>Part 05 <code>nft-flow</code> stores a <code>MintState</code> PDA and a mint pubkey — it does not mint a real Metaplex NFT.</p>
+    <ul>
+      <li>Difference between that model and a real Solana NFT?</li>
+      <li>What does <strong>Metaplex Token Metadata</strong> add?</li>
+      <li>Minimal NFT without Metaplex: <code>mint_to</code> supply 1, <code>decimals 0</code>?</li>
+    </ul>
+
+    <h3>6. Refunds (hard mode)</h3>
+    <ul>
+      <li>When should refund happen — on each new bid or only on settle?</li>
+      <li>Who pays rent for bidder ATAs?</li>
+      <li>How do you avoid double-spend of vault balance?</li>
+    </ul>
+
+    <h3>7. Testing</h3>
+    <ul>
+      <li>How do you create an NFT mint + fund a creator ATA in <code>anchor.test.ts</code>?</li>
+      <li>Packages: <code>@solana/spl-token</code>, optionally <code>@metaplex-foundation/mpl-token-metadata</code>.</li>
+      <li>Assertions: winner ATA holds <code>amount === 1</code> after settle?</li>
+    </ul>
+
+    <hr />
+
+    <h2>Suggested reading</h2>
+    <ul class="refs">
+      <li><a href="https://spl.solana.com/token" target="_blank" rel="noopener">SPL Token program</a></li>
+      <li><a href="https://www.anchor-lang.com/docs/tokens" target="_blank" rel="noopener">Anchor SPL docs</a></li>
+      <li><a href="https://developers.metaplex.com/token-metadata" target="_blank" rel="noopener">Metaplex Token Metadata</a></li>
+      <li><code>final_solution/architecture-notes.md</code> — reuse the CPI diagram pattern</li>
+    </ul>
+
+    <hr />
+
+    <h2>Minimal deliverable (if you try it)</h2>
+    <ul class="scope">
+      <li><strong>A — Smallest:</strong> Settle pays <code>creator</code> instead of <code>winner</code>. No NFT.</li>
+      <li><strong>B — Medium:</strong> Escrow NFT on create + transfer to winner on settle (spl-token only).</li>
+      <li><strong>C — Full:</strong> B + refunds + events + tests with real mints.</li>
+    </ul>
+    <p>Document PDA seeds, CPI account lists, and authority rules in your own <code>architecture-notes.md</code>.</p>
+
+    <hr />
+
+    <h2>Out of scope even for bonus</h2>
+    <ul>
+      <li>English or Dutch auctions with time extensions</li>
+      <li>Royalties on secondary sales</li>
+      <li>Composable auctions across programs (CPI into Metaplex)</li>
+      <li>Token-2022 / compressed NFTs</li>
+    </ul>
+  </main>
+  <script>
+    mermaid.initialize({
+      startOnLoad: true,
+      theme: "dark",
+      securityLevel: "loose",
+      flowchart: { curve: "basis" },
+    });
+  </script>
+</body>
+</html>

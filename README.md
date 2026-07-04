@@ -11,6 +11,7 @@ Reference copies of the code you build in **Solana Playground** (and later in lo
 | **03** | [`03-accounts-state/`](03-accounts-state/) | [`exercise.md`](03-accounts-state/exercise.md); bases: [`exercise_solution_base/`](03-accounts-state/exercise_solution_base/), full: [`exercise_solution_final/`](03-accounts-state/exercise_solution_final/) |
 | **04** | [`04-pdas-project-prep/`](04-pdas-project-prep/) | [`exercise.md`](04-pdas-project-prep/exercise.md) — PDAs, seeds, project prep |
 | **05** | [`05-final-projects/`](05-final-projects/) | [`projects.md`](05-final-projects/projects.md); skeletons: [`nft-flow/`](05-final-projects/nft-flow/), [`auction-dapp/`](05-final-projects/auction-dapp/) |
+| **06** | [`06-advanced-anchor-solana/`](06-advanced-anchor-solana/) | [`projects.md`](06-advanced-anchor-solana/projects.md); tracks A/B/C each with [`starting_code`](06-advanced-anchor-solana/auction-vault/starting_code/) → [`final_solution`](06-advanced-anchor-solana/auction-vault/final_solution/): [`auction-vault/`](06-advanced-anchor-solana/auction-vault/), [`nft-fee-close/`](06-advanced-anchor-solana/nft-fee-close/), [`counter-vault/`](06-advanced-anchor-solana/counter-vault/) |
 
 ### Slides (Reveal.js)
 
@@ -23,6 +24,7 @@ Not shipped inside this git repo. If you use a workspace where **`course/`** sit
 | 03 | [`../course/03-accounts-state/slides.html`](../course/03-accounts-state/slides.html) |
 | 04 | [`../course/04-pdas-project-prep/slides.html`](../course/04-pdas-project-prep/slides.html) |
 | 05 | [`../course/05-final-projects/slides.html`](../course/05-final-projects/slides.html) |
+| 06 | [`../course/06-advanced-anchor-solana/slides.html`](../course/06-advanced-anchor-solana/slides.html) |
 
 Root-level [`lib.rs`](lib.rs), [`client.ts`](client.ts), [`anchor.test.ts`](anchor.test.ts) are a generic Playground-style template (not tied to one part).
 
